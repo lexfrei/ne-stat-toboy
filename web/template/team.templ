@@ -1,0 +1,38 @@
+package template
+
+import "github.com/lexfrei/ne-stat-toboy/internal/model"
+
+templ Team(film model.FilmInfo) {
+    @Layout("Команда фильма " + film.Title) {
+        <section class="team">
+            <div class="container">
+                <h1>Команда проекта</h1>
+                
+                <div class="team-grid">
+                    for _, member := range film.TeamMembers {
+                        <div class="team-member">
+                            <h3>{ member.Name }</h3>
+                            <p class="role">{ member.Role }</p>
+                            if member.Email != "" {
+                                <p class="email">{ member.Email }</p>
+                            }
+                        </div>
+                    }
+                </div>
+                
+                <h2>Актеры</h2>
+                <div class="cast-grid">
+                    for _, cast := range film.Cast {
+                        <div class="cast-member">
+                            if cast.ImageURL != "" {
+                                <img src={ cast.ImageURL } alt={ cast.ActorName } />
+                            }
+                            <h3>{ cast.ActorName }</h3>
+                            <p class="role">{ cast.Role }</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </section>
+    }
+}

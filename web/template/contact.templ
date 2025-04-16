@@ -1,0 +1,56 @@
+package template
+
+import "github.com/lexfrei/ne-stat-toboy/internal/model"
+
+templ Contact(film model.FilmInfo) {
+    @Layout("Контакты фильма " + film.Title) {
+        <section class="contact">
+            <div class="container">
+                <h1>Контакты</h1>
+                
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <h3>Режиссер</h3>
+                        <p>{ film.Director }</p>
+                        <p>Email: { film.ContactEmail }</p>
+                        <p>Телефон: { film.ContactPhone }</p>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <h3>Продюсер</h3>
+                        <p>{ film.Producer }</p>
+                    </div>
+                </div>
+                
+                <div class="contact-form">
+                    <h2>Связаться с нами</h2>
+                    <form hx-post="/api/contact" hx-swap="outerHTML">
+                        <div class="form-group">
+                            <label for="name">Имя</label>
+                            <input type="text" id="name" name="name" required />
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required />
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="message">Сообщение</label>
+                            <textarea id="message" name="message" rows="5" required></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn">Отправить</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    }
+}
+
+templ ContactSuccess() {
+    <div class="success-message">
+        <h3>Сообщение отправлено!</h3>
+        <p>Спасибо за ваше сообщение. Мы свяжемся с вами в ближайшее время.</p>
+    </div>
+}

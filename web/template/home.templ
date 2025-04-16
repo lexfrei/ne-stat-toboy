@@ -1,0 +1,28 @@
+package template
+
+import "github.com/lexfrei/ne-stat-toboy/internal/model"
+import "strconv"
+
+templ Home(film model.FilmInfo) {
+    @Layout(film.Title) {
+        <section class="hero">
+            <div class="hero-content">
+                <h1>{ film.Title }</h1>
+                <p class="tagline">{ film.Tagline }</p>
+                <div class="film-info">
+                    <p><span>Режиссер:</span> { film.Director }</p>
+                    <p><span>Жанр:</span> { film.Genre }</p>
+                    <p><span>Хронометраж:</span> { strconv.Itoa(film.DurationMinutes) } минут</p>
+                </div>
+            </div>
+        </section>
+        
+        <section class="quick-overview">
+            <div class="container">
+                <h2>О проекте</h2>
+                <p>{ film.Synopsis }</p>
+                <a href="/about" class="btn">Узнать больше</a>
+            </div>
+        </section>
+    }
+}

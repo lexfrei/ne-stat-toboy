@@ -1,0 +1,27 @@
+package template
+
+import "github.com/lexfrei/ne-stat-toboy/internal/model"
+
+templ Locations(film model.FilmInfo) {
+    @Layout("Локации фильма " + film.Title) {
+        <section class="locations">
+            <div class="container">
+                <h1>Локации</h1>
+                
+                <div class="locations-grid">
+                    for _, location := range film.Locations {
+                        <div class="location-card">
+                            if location.ImageURL != "" {
+                                <img src={ location.ImageURL } alt={ location.Name } />
+                            }
+                            <div class="location-info">
+                                <h3>{ location.Name }</h3>
+                                <p>{ location.Description }</p>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </section>
+    }
+}

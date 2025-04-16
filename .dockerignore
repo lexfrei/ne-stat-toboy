@@ -1,0 +1,26 @@
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile
+.dockerignore
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build artifacts
+/bin/
+/vendor/
+
+# Test files
+*_test.go
+*.test
+
+# Other
+README.md
+LICENSE
+.DS_Store
