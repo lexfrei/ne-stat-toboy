@@ -20,7 +20,7 @@ import (
 
 func main() {
 	// Setup logger
-	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
 		Level: slog.LevelInfo,
 	}))
 	slog.SetDefault(logger)
@@ -79,14 +79,14 @@ func main() {
 	<-quit
 
 	slog.Info("Shutting down server...")
-	
+
 	// Create a deadline to wait for
 	shutdownCtx, shutdownCancel := context.WithTimeout(ctx, 10*time.Second)
 	defer shutdownCancel()
-	
+
 	if err := e.Shutdown(shutdownCtx); err != nil {
 		slog.Error("Server shutdown error", "error", err)
 	}
-	
+
 	slog.Info("Server stopped")
 }
