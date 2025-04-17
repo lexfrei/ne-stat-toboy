@@ -3,6 +3,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
@@ -13,6 +14,7 @@ import (
 	"github.com/cockroachdb/errors"
 	"github.com/labstack/echo/v4"
 	echoMiddleware "github.com/labstack/echo/v4/middleware"
+	"github.com/lexfrei/ne-stat-toboy/internal/config"
 	"github.com/lexfrei/ne-stat-toboy/internal/handler"
 	"github.com/lexfrei/ne-stat-toboy/internal/middleware"
 	"github.com/lexfrei/ne-stat-toboy/internal/minify"
@@ -24,6 +26,19 @@ func main() {
 		Level: slog.LevelInfo,
 	}))
 	slog.SetDefault(logger)
+
+	// Initialize configuration
+	config.Initialize()
+	rootCmd := config.InitCommands()
+	
+	// If called with arguments, let cobra handle it
+	if len(os.Args) > 1 {
+		if err := rootCmd.Execute(); err != nil {
+			slog.Error("Command execution failed", "error", err)
+			os.Exit(1)
+		}
+		return
+	}
 
 	// Create main context
 	ctx, cancel := context.WithCancel(context.Background())
@@ -38,7 +53,12 @@ func main() {
 	}
 
 	// Setup handlers
-	h := handler.New()
+	h := handler.New(
+		handler.WithTelegramConfig(
+			config.AppConfig.Telegram.Token,
+			config.AppConfig.Telegram.ChatID,
+		),
+	)
 
 	// Create Echo instance
 	e := echo.New()
@@ -66,8 +86,10 @@ func main() {
 
 	// Start server in a goroutine
 	go func() {
-		slog.Info("Server starting", "port", "8080")
-		if err := e.Start(":8080"); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		port := config.AppConfig.Server.Port
+		address := fmt.Sprintf(":%d", port)
+		slog.Info("Server starting", "port", port)
+		if err := e.Start(address); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			slog.Error("Server error", "error", err)
 			os.Exit(1)
 		}

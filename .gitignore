@@ -1,0 +1,18 @@
+# Binary files
+/ne-stat-toboy
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Kubernetes secrets
+k8s/secrets.yaml
+
+# Environment files
+.env
+.env.*
+
+# Build artifacts
+/tmp
+/web/static/css/*.min.css
+/web/static/js/*.min.js

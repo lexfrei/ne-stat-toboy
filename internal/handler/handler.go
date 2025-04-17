@@ -2,20 +2,48 @@
 package handler
 
 import (
+	"bytes"
+	"encoding/json"
+	"fmt"
 	"log/slog"
+	"net/http"
+	"time"
 	"github.com/labstack/echo/v4"
 	"github.com/lexfrei/ne-stat-toboy/internal/model"
 	"github.com/lexfrei/ne-stat-toboy/web/template"
 )
 
+// TelegramMessage represents the structure for sending messages to Telegram API
+type TelegramMessage struct {
+	ChatID    string `json:"chat_id"`
+	Text      string `json:"text"`
+	ParseMode string `json:"parse_mode,omitempty"`
+}
+
 // Handler contains all HTTP handlers and their dependencies.
 type Handler struct {
 	FilmInfo model.FilmInfo
+	TelegramToken string
+	TelegramChatID string
+}
+
+// HandlerOption is a functional option for configuring the handler
+type HandlerOption func(*Handler)
+
+// WithTelegramConfig configures Telegram notification settings
+func WithTelegramConfig(token, chatID string) HandlerOption {
+	return func(h *Handler) {
+		h.TelegramToken = token
+		h.TelegramChatID = chatID
+	}
 }
 
 // New creates a new Handler with initialized dependencies.
-func New() *Handler {
-	return &Handler{
+func New(opts ...HandlerOption) *Handler {
+	h := &Handler{
+		// Default empty values for Telegram config
+		TelegramToken: "",
+		TelegramChatID: "",
 		FilmInfo: model.FilmInfo{
 			Title:           "Не стать тобой",
 			Tagline:         "Жизнь в семье, где любовь выражается насилием, ложью и запретами, подталкивает школьницу к тяжелому выбору - смерть или предательство ради жизни",
@@ -61,6 +89,13 @@ func New() *Handler {
 			},
 		},
 	}
+	
+	// Apply all options
+	for _, opt := range opts {
+		opt(h)
+	}
+	
+	return h
 }
 
 // HomeHandlerEcho renders the home page.
@@ -110,11 +145,77 @@ func (h *Handler) ContactHandlerEcho(c echo.Context) error {
 
 // ContactSubmitHandlerEcho processes contact form submissions.
 func (h *Handler) ContactSubmitHandlerEcho(c echo.Context) error {
-	// In a real app, process the form submission here
+	// Get form data
+	name := c.FormValue("name")
+	email := c.FormValue("email")
+	message := c.FormValue("message")
+	timeStamp := time.Now().Format(time.RFC3339)
+	
+	// Log the submission
+	slog.Info("Contact form submission", 
+		"name", name,
+		"email", email,
+		"message", message,
+		"time", timeStamp)
+	
+	// Format message for Telegram
+	telegramMsg := fmt.Sprintf(
+		"<b>Новое сообщение с сайта!</b>\n\n" +
+		"<b>Имя:</b> %s\n" +
+		"<b>Email:</b> %s\n" +
+		"<b>Время:</b> %s\n\n" +
+		"<b>Сообщение:</b>\n%s",
+		name, email, timeStamp, message)
+	
+	// Send to Telegram
+	err := h.sendTelegramMessage(telegramMsg)
+	if err != nil {
+		slog.Error("Failed to send message to Telegram", "error", err)
+		// Continue anyway - don't show error to user
+	}
+	
+	// Return success template
 	component := template.ContactSuccess()
 	if err := component.Render(c.Request().Context(), c.Response().Writer); err != nil {
 		return handleTemplateError(err, c, "Failed to render contact success page")
 	}
+	return nil
+}
+
+// sendTelegramMessage sends a message to the specified Telegram chat
+func (h *Handler) sendTelegramMessage(text string) error {
+	// Check if Telegram is configured
+	if h.TelegramToken == "" || h.TelegramChatID == "" {
+		slog.Info("Telegram notification skipped - token or chat ID not configured")
+		return nil
+	}
+	
+	url := fmt.Sprintf("https://api.telegram.org/bot%s/sendMessage", h.TelegramToken)
+	
+	msg := TelegramMessage{
+		ChatID: h.TelegramChatID,
+		Text:   text,
+		ParseMode: "HTML", // Allow HTML formatting
+	}
+	
+	payload, err := json.Marshal(msg)
+	if err != nil {
+		slog.Error("Failed to marshal Telegram message", "error", err)
+		return err
+	}
+	
+	resp, err := http.Post(url, "application/json", bytes.NewBuffer(payload))
+	if err != nil {
+		slog.Error("Failed to send Telegram message", "error", err)
+		return err
+	}
+	defer resp.Body.Close()
+	
+	if resp.StatusCode != http.StatusOK {
+		slog.Error("Telegram API error", "status", resp.Status)
+		return fmt.Errorf("telegram API error: %s", resp.Status)
+	}
+	
 	return nil
 }
 

@@ -22,12 +22,20 @@ body {
     background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/static/img/hero-bg.jpg');
     background-attachment: fixed;
     background-size: cover;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 .container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
+}
+
+/* Layout Structure */
+main {
+    flex: 1;
 }
 
 /* Header */
@@ -313,11 +321,27 @@ section h2 {
 .success-message {
     background-color: rgba(20, 83, 45, 0.8);
     color: #a3e635;
-    padding: 1.5rem;
+    padding: 2.5rem 1.5rem;
     border-radius: 4px;
     text-align: center;
-    margin-top: 1rem;
+    margin: 2rem 0;
     border: 1px solid #a3e635;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* Contact Page Styles */
+.contact-item a {
+    color: var(--dim-text);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.contact-item a:hover {
+    color: var(--primary-color);
+    text-decoration: underline;
 }
 
 /* Footer */
