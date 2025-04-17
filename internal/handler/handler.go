@@ -75,8 +75,8 @@ func New(opts ...HandlerOption) *Handler {
 				},
 			},
 			TeamMembers: []model.TeamMember{
-				{Role: "Режиссер", Name: "Мария Свиридкина", Email: "me@masha.film"},
-				{Role: "Продюсер", Name: "Илья Минин", Email: ""},
+				{Role: "Режиссер", Name: "Мария Свиридкина", Email: "me@masha.film", ImageURL: "/static/img/cast/maria.webp"},
+				{Role: "Продюсер", Name: "Илья Минин", Email: "minin-ilya@yandex.ru", ImageURL: "/static/img/cast/ilya.webp"},
 				{Role: "Второй режиссер", Name: "Елизавета Федорова", Email: ""},
 				{Role: "Директор площадки", Name: "Арина Анисова", Email: ""},
 				{Role: "Кастинг-директор", Name: "Максим Головач", Email: ""},

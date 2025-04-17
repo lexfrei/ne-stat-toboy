@@ -11,6 +11,9 @@ templ Team(film model.FilmInfo) {
                 <div class="team-grid">
                     for _, member := range film.TeamMembers {
                         <div class="team-member">
+                            if member.ImageURL != "" {
+                                <img src={ member.ImageURL } alt={ member.Name } />
+                            }
                             <h3>{ member.Name }</h3>
                             <p class="role">{ member.Role }</p>
                             if member.Email != "" {

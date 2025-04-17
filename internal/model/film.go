@@ -22,9 +22,10 @@ type Location struct {
 }
 
 type TeamMember struct {
-    Role  string
-    Name  string
-    Email string
+    Role     string
+    Name     string
+    Email    string
+    ImageURL string
 }
 
 type CastMember struct {

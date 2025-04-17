@@ -209,7 +209,7 @@ section h2 {
     text-align: center;
 }
 
-.cast-member img {
+.team-member img, .cast-member img {
     width: 100%;
     height: auto;
     border-radius: 8px;
@@ -365,6 +365,14 @@ section h2 {
 .contact-item a:hover {
     color: var(--primary-color);
     text-decoration: underline;
+}
+
+.contact-image {
+    width: 150px;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    display: block;
 }
 
 /* Footer */
