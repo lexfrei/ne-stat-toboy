@@ -7,7 +7,6 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
-	"os/exec"
 	"os/signal"
 	"strings"
 	"syscall"
@@ -20,6 +19,7 @@ import (
 	"github.com/lexfrei/ne-stat-toboy/internal/config"
 	"github.com/lexfrei/ne-stat-toboy/internal/handler"
 	"github.com/lexfrei/ne-stat-toboy/internal/middleware"
+	"github.com/lexfrei/ne-stat-toboy/internal/minify"
 	prom "github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/collectors"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -49,16 +49,12 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	// Minify static files using the minify CLI tool
+	// Minify static files
 	staticDir := "web/static"
 	slog.Info("Minifying static files", "directory", staticDir)
-
-	// Create a command to run minify CLI
-	cmd := exec.Command("minify", "-r", "-o", staticDir, staticDir)
-	cmdOutput, err := cmd.CombinedOutput()
-	if err != nil {
-		slog.Error("Failed to minify static files", "error", err, "output", string(cmdOutput))
-		// Continue execution even if minification fails
+	if err := minify.MinifyStaticFiles(staticDir); err != nil {
+	 slog.Error("Failed to minify static files", "error", err)
+	 // Continue execution even if minification fails
 	}
 
 	// Setup handlers
