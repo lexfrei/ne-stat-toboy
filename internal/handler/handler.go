@@ -8,7 +8,6 @@ import (
 	"html"
 	"log/slog"
 	"net/http"
-	"regexp"
 	"strings"
 	"time"
 
@@ -261,27 +260,7 @@ func (h *Handler) sendTelegramMessage(text string) error {
 	return nil
 }
 
-// validateEmail checks if the email format is valid
-func validateEmail(email string) bool {
-	// Simple validation just for demonstration
-	emailRegex := regexp.MustCompile(`^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$`)
-	return emailRegex.MatchString(email)
-}
-
-// sanitizeString removes potentially harmful characters
-func sanitizeString(s string) string {
-	// Trim whitespace and normalize
-	s = strings.TrimSpace(s)
-
-	// Replace multiple spaces with a single space
-	spaceRegex := regexp.MustCompile(`\s+`)
-	s = spaceRegex.ReplaceAllString(s, " ")
-
-	// Remove null bytes
-	s = strings.ReplaceAll(s, "\x00", "")
-
-	return s
-}
+// validateEmail and sanitizeString functions are in validation.go
 
 // handleTemplateError logs the error and returns a proper HTTP error response.
 func handleTemplateError(err error, _ echo.Context, message string) error {

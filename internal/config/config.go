@@ -71,7 +71,9 @@ func InitCommands() *cobra.Command {
 	rootCmd.PersistentFlags().IntVarP(&AppConfig.Server.Port, "port", "p", 8080, "Port to listen on")
 	
 	// Bind flags to viper
-	viper.BindPFlag("server.port", rootCmd.PersistentFlags().Lookup("port"))
+	if err := viper.BindPFlag("server.port", rootCmd.PersistentFlags().Lookup("port")); err != nil {
+		slog.Error("Failed to bind flag", "error", err)
+	}
 
 	return rootCmd
 }
