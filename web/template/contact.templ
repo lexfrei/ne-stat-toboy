@@ -2,6 +2,12 @@ package template
 
 import "github.com/lexfrei/ne-stat-toboy/internal/model"
 
+// ContactData contains data for the contact page
+type ContactData struct {
+    Film      model.FilmInfo
+    CSRFToken string
+}
+
 templ Contact(film model.FilmInfo) {
     @Layout("Контакты") {
         <section class="contact">
@@ -73,6 +79,96 @@ templ Contact(film model.FilmInfo) {
                 }
             });
             
+            function showFormErrors(event) {
+                // Reset any existing errors
+                document.querySelectorAll('.error-message').forEach(el => {
+                    el.textContent = '';
+                    el.style.display = 'none';
+                });
+                
+                // Check if there are errors to show
+                if (event.detail.xhr.status === 400) {
+                    try {
+                        const response = JSON.parse(event.detail.xhr.responseText);
+                        if (response.errors) {
+                            // Show each error
+                            Object.keys(response.errors).forEach(field => {
+                                const errorElement = document.getElementById(`${field}-error`);
+                                if (errorElement) {
+                                    errorElement.textContent = response.errors[field];
+                                    errorElement.style.display = 'block';
+                                }
+                            });
+                        }
+                    } catch (e) {
+                        console.error('Error parsing response:', e);
+                    }
+                    
+                    // Prevent the default swap behavior
+                    event.detail.shouldSwap = false;
+                }
+            }
+        </script>
+    }
+}
+
+templ ContactWithCSRF(data ContactData) {
+    @Layout("Контакты") {
+        <section class="contact">
+            <div class="container">
+                <h1>Контакты</h1>
+                
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <h3>Режиссер</h3>
+                        <p>{ data.Film.Director }</p>
+                        <p>Email: <a href="mailto:me@masha.film">me@masha.film</a></p>
+                        <p>Телефон: <a href="tel:+79164671300">+7 916 467 13 00</a></p>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <h3>Продюсер</h3>
+                        <p>{ data.Film.Producer }</p>
+                        for _, member := range data.Film.TeamMembers {
+                            if member.Role == "Продюсер" && member.Email != "" {
+                                <p>Email: <a href="mailto:minin-ilya@yandex.ru">minin-ilya@yandex.ru</a></p>
+                            }
+                        }
+                    </div>
+                </div>
+                
+                <div class="contact-form">
+                    <h2>Связаться с нами</h2>
+                    <form hx-post="/api/contact" hx-swap="outerHTML" hx-indicator="#form-indicator" hx-on::after-request="showFormErrors(event)">
+                        <div id="form-indicator" class="htmx-indicator">Отправка...</div>
+                        
+                        <input type="hidden" name="_csrf" value={ data.CSRFToken } />
+                        
+                        <div class="form-group">
+                            <label for="name">Имя</label>
+                            <input type="text" id="name" name="name" required />
+                            <div class="error-message" id="name-error"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required />
+                            <div class="error-message" id="email-error"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="message">Сообщение</label>
+                            <textarea id="message" name="message" rows="5" required></textarea>
+                            <div class="error-message" id="message-error"></div>
+                        </div>
+                        
+                        <button type="submit" class="btn">Отправить</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+        
+        <script>
             function showFormErrors(event) {
                 // Reset any existing errors
                 document.querySelectorAll('.error-message').forEach(el => {

@@ -139,7 +139,20 @@ func (h *Handler) LocationsHandlerEcho(c echo.Context) error {
 
 // ContactHandlerEcho renders the contact page.
 func (h *Handler) ContactHandlerEcho(c echo.Context) error {
-	component := template.Contact(h.FilmInfo)
+	// We need to properly pass the CSRF token to the template
+	csrfToken := c.Get("csrf").(string)
+
+	// Create a custom data structure with film info and CSRF token
+	data := struct {
+		Film      model.FilmInfo
+		CSRFToken string
+	}{
+		Film:      h.FilmInfo,
+		CSRFToken: csrfToken,
+	}
+
+	// Pass the data to the template
+	component := template.ContactWithCSRF(data)
 	if err := component.Render(c.Request().Context(), c.Response().Writer); err != nil {
 		return handleTemplateError(err, c, "Failed to render contact page")
 	}
