@@ -9,7 +9,14 @@ templ Layout(title string) {
         <title>{ title } - Короткометражный фильм</title>
         <link rel="stylesheet" href="/static/css/style.css" />
         <script src="https://unpkg.com/htmx.org@1.9.3"></script>
-        <script defer data-domain="nst.masha.film" src="https://plausible.io/js/script.js"></script>
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-BJBBBY107R"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-BJBBBY107R');
+        </script>
     </head>
     <body>
         <header>
