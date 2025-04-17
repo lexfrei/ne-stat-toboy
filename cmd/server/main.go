@@ -7,17 +7,22 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
+	"os/exec"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
 	"github.com/cockroachdb/errors"
+	"github.com/labstack/echo-contrib/prometheus"
 	"github.com/labstack/echo/v4"
 	echoMiddleware "github.com/labstack/echo/v4/middleware"
 	"github.com/lexfrei/ne-stat-toboy/internal/config"
 	"github.com/lexfrei/ne-stat-toboy/internal/handler"
 	"github.com/lexfrei/ne-stat-toboy/internal/middleware"
-	"github.com/lexfrei/ne-stat-toboy/internal/minify"
+	prom "github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/collectors"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func main() {
@@ -30,7 +35,7 @@ func main() {
 	// Initialize configuration
 	config.Initialize()
 	rootCmd := config.InitCommands()
-	
+
 	// If called with arguments, let cobra handle it
 	if len(os.Args) > 1 {
 		if err := rootCmd.Execute(); err != nil {
@@ -44,11 +49,15 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	// Minify static files
+	// Minify static files using the minify CLI tool
 	staticDir := "web/static"
 	slog.Info("Minifying static files", "directory", staticDir)
-	if err := minify.MinifyStaticFiles(staticDir); err != nil {
-		slog.Error("Failed to minify static files", "error", err)
+
+	// Create a command to run minify CLI
+	cmd := exec.Command("minify", "-r", "-o", staticDir, staticDir)
+	cmdOutput, err := cmd.CombinedOutput()
+	if err != nil {
+		slog.Error("Failed to minify static files", "error", err, "output", string(cmdOutput))
 		// Continue execution even if minification fails
 	}
 
@@ -67,16 +76,23 @@ func main() {
 
 	// Add middleware
 	e.Use(echoMiddleware.Recover())
-	e.Use(echoMiddleware.Logger())
+
+	// Custom logger that matches slog format and skips healthz and metrics endpoints
+	e.Use(middleware.ConditionalLogger())
 	// Security middlewares
 	e.Use(echoMiddleware.CSRFWithConfig(echoMiddleware.CSRFConfig{
-		TokenLookup: "form:_csrf",
-		CookieName: "csrf",
-		CookieMaxAge: 3600,
-		CookieSecure: true, 
+		TokenLookup:    "form:_csrf",
+		CookieName:     "csrf",
+		CookieMaxAge:   3600,
+		CookieSecure:   true,
 		CookieHTTPOnly: true,
 		CookieSameSite: http.SameSiteStrictMode,
-		ContextKey: "csrf",
+		ContextKey:     "csrf",
+		Skipper: func(c echo.Context) bool {
+			// Skip CSRF for metrics and health check endpoints
+			path := c.Request().URL.Path
+			return strings.HasPrefix(path, "/healthz") || strings.HasPrefix(path, "/metrics")
+		},
 	}))
 	e.Use(echoMiddleware.SecureWithConfig(echoMiddleware.SecureConfig{
 		XSSProtection:         "1; mode=block",
@@ -105,7 +121,25 @@ func main() {
 	// Static files handler
 	e.Static("/static", staticDir)
 
-	// Setup routes
+	// Setup Prometheus metrics
+	// Create a custom registry
+	promRegistry := prom.NewRegistry()
+
+	// Register Go runtime metrics
+	promRegistry.MustRegister(collectors.NewGoCollector())
+
+	// Register process metrics
+	promRegistry.MustRegister(collectors.NewProcessCollector(collectors.ProcessCollectorOpts{}))
+
+	// Register Echo metrics
+	p := prometheus.NewPrometheus("nestattoboy", nil)
+	p.Use(e)
+
+	// Add health check and metrics endpoints
+	e.GET("/healthz", h.HealthCheckHandler)
+	e.GET("/metrics", echo.WrapHandler(promhttp.HandlerFor(promRegistry, promhttp.HandlerOpts{})))
+
+	// Setup application routes
 	e.GET("/", h.HomeHandlerEcho)
 	e.GET("/about", h.AboutHandlerEcho)
 	e.GET("/team", h.TeamHandlerEcho)

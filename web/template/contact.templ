@@ -3,7 +3,7 @@ package template
 import "github.com/lexfrei/ne-stat-toboy/internal/model"
 
 templ Contact(film model.FilmInfo) {
-    @Layout("Контакты фильма " + film.Title) {
+    @Layout("Контакты") {
         <section class="contact">
             <div class="container">
                 <h1>Контакты</h1>
@@ -11,19 +11,17 @@ templ Contact(film model.FilmInfo) {
                 <div class="contact-info">
                     <div class="contact-item">
                         <h3>Режиссер</h3>
-                        <img src="/static/img/cast/maria.webp" alt={ film.Director } class="contact-image" />
                         <p>{ film.Director }</p>
-                        <p>Email: <a href="mailto:{ film.ContactEmail }">{ film.ContactEmail }</a></p>
-                        <p>Телефон: <a href="tel:{ film.ContactPhone }">{ film.ContactPhone }</a></p>
+                        <p>Email: <a href="mailto:me@masha.film">me@masha.film</a></p>
+                        <p>Телефон: <a href="tel:+79164671300">+7 916 467 13 00</a></p>
                     </div>
                     
                     <div class="contact-item">
                         <h3>Продюсер</h3>
-                        <img src="/static/img/cast/ilya.webp" alt={ film.Producer } class="contact-image" />
                         <p>{ film.Producer }</p>
                         for _, member := range film.TeamMembers {
                             if member.Role == "Продюсер" && member.Email != "" {
-                                <p>Email: <a href="mailto:{ member.Email }">{ member.Email }</a></p>
+                                <p>Email: <a href="mailto:minin-ilya@yandex.ru">minin-ilya@yandex.ru</a></p>
                             }
                         }
                     </div>
@@ -33,6 +31,8 @@ templ Contact(film model.FilmInfo) {
                     <h2>Связаться с нами</h2>
                     <form hx-post="/api/contact" hx-swap="outerHTML" hx-indicator="#form-indicator" hx-on::after-request="showFormErrors(event)">
                         <div id="form-indicator" class="htmx-indicator">Отправка...</div>
+                        
+                        <input type="hidden" name="_csrf" id="csrf-token" />
                         
                         <div class="form-group">
                             <label for="name">Имя</label>
@@ -59,6 +59,20 @@ templ Contact(film model.FilmInfo) {
         </section>
         
         <script>
+            // Set CSRF token from cookie
+            function getCookie(name) {
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; ${name}=`);
+                if (parts.length === 2) return parts.pop().split(';').shift();
+            }
+            
+            document.addEventListener('DOMContentLoaded', () => {
+                const csrfToken = getCookie('csrf');
+                if (csrfToken) {
+                    document.getElementById('csrf-token').value = csrfToken;
+                }
+            });
+            
             function showFormErrors(event) {
                 // Reset any existing errors
                 document.querySelectorAll('.error-message').forEach(el => {

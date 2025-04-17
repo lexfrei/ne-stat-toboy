@@ -56,52 +56,38 @@ func Contact(film model.FilmInfo) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</p><p>Email: ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</p><p>Email: <a href=\"mailto:me@masha.film\">me@masha.film</a></p><p>Телефон: <a href=\"tel:+79164671300\">+7 916 467 13 00</a></p></div><div class=\"contact-item\"><h3>Продюсер</h3><p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var4 string
-			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(film.ContactEmail)
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(film.Producer)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/template/contact.templ`, Line: 15, Col: 53}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/template/contact.templ`, Line: 21, Col: 42}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</p><p>Телефон: ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var5 string
-			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(film.ContactPhone)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/template/contact.templ`, Line: 16, Col: 62}
+			for _, member := range film.TeamMembers {
+				if member.Role == "Продюсер" && member.Email != "" {
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<p>Email: <a href=\"mailto:minin-ilya@yandex.ru\">minin-ilya@yandex.ru</a></p>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+				}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</p></div><div class=\"contact-item\"><h3>Продюсер</h3><p>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var6 string
-			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(film.Producer)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/template/contact.templ`, Line: 21, Col: 42}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</p></div></div><div class=\"contact-form\"><h2>Связаться с нами</h2><form hx-post=\"/api/contact\" hx-swap=\"outerHTML\"><div class=\"form-group\"><label for=\"name\">Имя</label> <input type=\"text\" id=\"name\" name=\"name\" required></div><div class=\"form-group\"><label for=\"email\">Email</label> <input type=\"email\" id=\"email\" name=\"email\" required></div><div class=\"form-group\"><label for=\"message\">Сообщение</label> <textarea id=\"message\" name=\"message\" rows=\"5\" required></textarea></div><button type=\"submit\" class=\"btn\">Отправить</button></form></div></div></section>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div></div><div class=\"contact-form\"><h2>Связаться с нами</h2><form hx-post=\"/api/contact\" hx-swap=\"outerHTML\" hx-indicator=\"#form-indicator\" hx-on::after-request=\"showFormErrors(event)\"><div id=\"form-indicator\" class=\"htmx-indicator\">Отправка...</div><input type=\"hidden\" name=\"_csrf\" id=\"csrf-token\"><div class=\"form-group\"><label for=\"name\">Имя</label> <input type=\"text\" id=\"name\" name=\"name\" required><div class=\"error-message\" id=\"name-error\"></div></div><div class=\"form-group\"><label for=\"email\">Email</label> <input type=\"email\" id=\"email\" name=\"email\" required><div class=\"error-message\" id=\"email-error\"></div></div><div class=\"form-group\"><label for=\"message\">Сообщение</label> <textarea id=\"message\" name=\"message\" rows=\"5\" required></textarea><div class=\"error-message\" id=\"message-error\"></div></div><button type=\"submit\" class=\"btn\">Отправить</button></form></div></div></section><script>\n            // Set CSRF token from cookie\n            function getCookie(name) {\n                const value = `; ${document.cookie}`;\n                const parts = value.split(`; ${name}=`);\n                if (parts.length === 2) return parts.pop().split(';').shift();\n            }\n            \n            document.addEventListener('DOMContentLoaded', () => {\n                const csrfToken = getCookie('csrf');\n                if (csrfToken) {\n                    document.getElementById('csrf-token').value = csrfToken;\n                }\n            });\n            \n            function showFormErrors(event) {\n                // Reset any existing errors\n                document.querySelectorAll('.error-message').forEach(el => {\n                    el.textContent = '';\n                    el.style.display = 'none';\n                });\n                \n                // Check if there are errors to show\n                if (event.detail.xhr.status === 400) {\n                    try {\n                        const response = JSON.parse(event.detail.xhr.responseText);\n                        if (response.errors) {\n                            // Show each error\n                            Object.keys(response.errors).forEach(field => {\n                                const errorElement = document.getElementById(`${field}-error`);\n                                if (errorElement) {\n                                    errorElement.textContent = response.errors[field];\n                                    errorElement.style.display = 'block';\n                                }\n                            });\n                        }\n                    } catch (e) {\n                        console.error('Error parsing response:', e);\n                    }\n                    \n                    // Prevent the default swap behavior\n                    event.detail.shouldSwap = false;\n                }\n            }\n        </script>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = Layout("Контакты фильма "+film.Title).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Layout("Контакты").Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -125,9 +111,9 @@ func ContactSuccess() templ.Component {
 			}()
 		}
 		ctx = templ.InitializeContext(ctx)
-		templ_7745c5c3_Var7 := templ.GetChildren(ctx)
-		if templ_7745c5c3_Var7 == nil {
-			templ_7745c5c3_Var7 = templ.NopComponent
+		templ_7745c5c3_Var5 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var5 == nil {
+			templ_7745c5c3_Var5 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
 		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div class=\"success-message\"><h3>Сообщение отправлено!</h3><p>Спасибо за ваше сообщение. Мы свяжемся с вами в ближайшее время.</p></div>")

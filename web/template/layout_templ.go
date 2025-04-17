@@ -36,13 +36,13 @@ func Layout(title string) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/template/layout.templ`, Line: 12, Col: 22}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `web/template/layout.templ`, Line: 9, Col: 22}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " - Короткометражный фильм</title><link rel=\"stylesheet\" href=\"/static/css/style.css\"><script src=\"https://unpkg.com/htmx.org@1.9.3\"></script></head><body><header><nav><div class=\"logo\">НЕ СТАТЬ ТОБОЙ</div><ul><li><a href=\"/\">Главная</a></li><li><a href=\"/about\">О фильме</a></li><li><a href=\"/team\">Команда</a></li><li><a href=\"/locations\">Локации</a></li><li><a href=\"/contact\">Контакты</a></li></ul></nav></header><main>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " - Короткометражный фильм</title><link rel=\"stylesheet\" href=\"/static/css/style.css\"><script src=\"https://unpkg.com/htmx.org@1.9.3\"></script><!-- Google tag (gtag.js) --><script async src=\"https://www.googletagmanager.com/gtag/js?id=G-BJBBBY107R\"></script><script>\n            window.dataLayer = window.dataLayer || [];\n            function gtag(){dataLayer.push(arguments);}\n            gtag('js', new Date());\n            gtag('config', 'G-BJBBBY107R');\n        </script></head><body><header><nav><div class=\"logo\">НЕ СТАТЬ ТОБОЙ</div><ul><li><a href=\"/\">Главная</a></li><li><a href=\"/about\">О фильме</a></li><li><a href=\"/team\">Команда</a></li><li><a href=\"/locations\">Локации</a></li><li><a href=\"/contact\">Контакты</a></li></ul></nav></header><main>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
