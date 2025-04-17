@@ -1,10 +1,11 @@
 :root {
-    --primary-color: #ffcb19;
-    --secondary-color: #3e4a89;
-    --dark-bg: #222;
-    --light-bg: #f5f5f5;
-    --text-color: #333;
+    --primary-color: #ffcb19; /* Gold from title */
+    --secondary-color: #7b3f3f; /* Dark red accent */
+    --dark-bg: #111827; /* Very dark blue-black */
+    --content-bg: #1e293b; /* Slightly lighter dark blue */
+    --text-color: #f9fafb; /* Almost white */
     --light-text: #fff;
+    --dim-text: #94a3b8; /* Secondary text */
 }
 
 * {
@@ -17,7 +18,10 @@ body {
     font-family: 'Roboto', sans-serif;
     line-height: 1.6;
     color: var(--text-color);
-    background-color: var(--light-bg);
+    background-color: var(--dark-bg);
+    background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/static/img/hero-bg.jpg');
+    background-attachment: fixed;
+    background-size: cover;
 }
 
 .container {
@@ -67,7 +71,7 @@ nav ul li a:hover {
 
 /* Hero Section */
 .hero {
-    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/static/img/hero-bg.jpg');
+    background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4));
     background-size: cover;
     background-position: center;
     color: var(--light-text);
@@ -116,19 +120,23 @@ section h1 {
     font-size: 2.5rem;
     margin-bottom: 2rem;
     text-align: center;
-    color: var(--secondary-color);
+    color: var(--primary-color);
 }
 
 section h2 {
     font-size: 2rem;
     margin-bottom: 1.5rem;
-    color: var(--secondary-color);
+    color: var(--primary-color);
 }
 
 /* Quick Overview */
 .quick-overview {
-    background-color: #fff;
+    background-color: var(--content-bg);
     text-align: center;
+    border-radius: 8px;
+    margin: 0 2rem;
+    padding: 2rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 .quick-overview p {
@@ -162,10 +170,10 @@ section h2 {
 }
 
 .film-synopsis, .film-concept, .film-message {
-    background-color: #fff;
+    background-color: var(--content-bg);
     padding: 2rem;
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 .film-message {
@@ -186,10 +194,10 @@ section h2 {
 }
 
 .team-member, .cast-member {
-    background-color: #fff;
+    background-color: var(--content-bg);
     padding: 1.5rem;
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     text-align: center;
 }
 
@@ -201,12 +209,12 @@ section h2 {
 }
 
 .role {
-    color: var(--secondary-color);
+    color: var(--primary-color);
     font-weight: 500;
 }
 
 .email {
-    color: #666;
+    color: var(--dim-text);
     font-size: 0.9rem;
     margin-top: 0.5rem;
 }
@@ -219,10 +227,10 @@ section h2 {
 }
 
 .location-card {
-    background-color: #fff;
+    background-color: var(--content-bg);
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 .location-card img {
@@ -243,19 +251,19 @@ section h2 {
 }
 
 .contact-item {
-    background-color: #fff;
+    background-color: var(--content-bg);
     padding: 1.5rem;
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 .contact-form {
     max-width: 600px;
     margin: 0 auto;
-    background-color: #fff;
+    background-color: var(--content-bg);
     padding: 2rem;
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 .form-group {
@@ -272,19 +280,22 @@ section h2 {
 .form-group textarea {
     width: 100%;
     padding: 0.8rem;
-    border: 1px solid #ddd;
+    border: 1px solid #444;
     border-radius: 4px;
     font-family: inherit;
     font-size: 1rem;
+    background-color: #1a1a2e;
+    color: var(--text-color);
 }
 
 .success-message {
-    background-color: #dff0d8;
-    color: #3c763d;
+    background-color: rgba(20, 83, 45, 0.8);
+    color: #a3e635;
     padding: 1.5rem;
     border-radius: 4px;
     text-align: center;
     margin-top: 1rem;
+    border: 1px solid #a3e635;
 }
 
 /* Footer */
