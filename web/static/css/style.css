@@ -219,6 +219,28 @@ section h2 {
     margin-top: 0.5rem;
 }
 
+.email a {
+    color: var(--dim-text);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.email a:hover {
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+
+.email a {
+    color: var(--dim-text);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.email a:hover {
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+
 /* Locations Page */
 .locations-grid {
     display: grid;

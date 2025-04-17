@@ -14,7 +14,7 @@ templ Team(film model.FilmInfo) {
                             <h3>{ member.Name }</h3>
                             <p class="role">{ member.Role }</p>
                             if member.Email != "" {
-                                <p class="email">{ member.Email }</p>
+                                <p class="email"><a href="mailto:{ member.Email }">{ member.Email }</a></p>
                             }
                         </div>
                     }
