@@ -11,6 +11,7 @@ import (
 	"regexp"
 	"strings"
 	"time"
+
 	"github.com/labstack/echo/v4"
 	"github.com/lexfrei/ne-stat-toboy/internal/model"
 	"github.com/lexfrei/ne-stat-toboy/web/template"
@@ -25,8 +26,8 @@ type TelegramMessage struct {
 
 // Handler contains all HTTP handlers and their dependencies.
 type Handler struct {
-	FilmInfo model.FilmInfo
-	TelegramToken string
+	FilmInfo       model.FilmInfo
+	TelegramToken  string
 	TelegramChatID string
 }
 
@@ -45,7 +46,7 @@ func WithTelegramConfig(token, chatID string) HandlerOption {
 func New(opts ...HandlerOption) *Handler {
 	h := &Handler{
 		// Default empty values for Telegram config
-		TelegramToken: "",
+		TelegramToken:  "",
 		TelegramChatID: "",
 		FilmInfo: model.FilmInfo{
 			Title:           "Не стать тобой",
@@ -92,12 +93,12 @@ func New(opts ...HandlerOption) *Handler {
 			},
 		},
 	}
-	
+
 	// Apply all options
 	for _, opt := range opts {
 		opt(h)
 	}
-	
+
 	return h
 }
 
@@ -149,22 +150,22 @@ func (h *Handler) ContactHandlerEcho(c echo.Context) error {
 // ContactSubmitHandlerEcho processes contact form submissions.
 func (h *Handler) ContactSubmitHandlerEcho(c echo.Context) error {
 	// Validate CSRF token (handled by middleware)
-	
+
 	// Get form data
 	name := strings.TrimSpace(c.FormValue("name"))
 	email := strings.TrimSpace(c.FormValue("email"))
 	message := strings.TrimSpace(c.FormValue("message"))
 	timeStamp := time.Now().Format(time.RFC3339)
-	
+
 	// Validate input
 	errors := make(map[string]string)
-	
+
 	if name == "" {
 		errors["name"] = "Имя обязательно"
 	} else if len(name) > 100 {
 		errors["name"] = "Имя слишком длинное (максимум 100 символов)"
 	}
-	
+
 	if email == "" {
 		errors["email"] = "Email обязателен"
 	} else if !validateEmail(email) {
@@ -172,13 +173,13 @@ func (h *Handler) ContactSubmitHandlerEcho(c echo.Context) error {
 	} else if len(email) > 100 {
 		errors["email"] = "Email слишком длинный (максимум 100 символов)"
 	}
-	
+
 	if message == "" {
 		errors["message"] = "Сообщение обязательно"
 	} else if len(message) > 5000 {
 		errors["message"] = "Сообщение слишком длинное (максимум 5000 символов)"
 	}
-	
+
 	if len(errors) > 0 {
 		// For HTMX requests, return form with errors
 		c.Response().Header().Set("HX-Trigger", "{\"showFormErrors\": true}")
@@ -186,35 +187,35 @@ func (h *Handler) ContactSubmitHandlerEcho(c echo.Context) error {
 			"errors": errors,
 		})
 	}
-	
+
 	// Sanitize input for logging/telegram
 	name = sanitizeString(name)
 	email = sanitizeString(email)
 	message = sanitizeString(message)
-	
+
 	// Log the submission
-	slog.Info("Contact form submission", 
+	slog.Info("Contact form submission",
 		"name", name,
 		"email", email,
 		"message_length", len(message),
 		"time", timeStamp)
-	
+
 	// Format message for Telegram
 	telegramMsg := fmt.Sprintf(
-		"<b>Новое сообщение с сайта!</b>\n\n" +
-		"<b>Имя:</b> %s\n" +
-		"<b>Email:</b> %s\n" +
-		"<b>Время:</b> %s\n\n" +
-		"<b>Сообщение:</b>\n%s",
+		"<b>Новое сообщение с сайта!</b>\n\n"+
+			"<b>Имя:</b> %s\n"+
+			"<b>Email:</b> %s\n"+
+			"<b>Время:</b> %s\n\n"+
+			"<b>Сообщение:</b>\n%s",
 		html.EscapeString(name), html.EscapeString(email), timeStamp, html.EscapeString(message))
-	
+
 	// Send to Telegram
 	err := h.sendTelegramMessage(telegramMsg)
 	if err != nil {
 		slog.Error("Failed to send message to Telegram", "error", err)
 		// Continue anyway - don't show error to user
 	}
-	
+
 	// Return success template
 	component := template.ContactSuccess()
 	if err := component.Render(c.Request().Context(), c.Response().Writer); err != nil {
@@ -230,33 +231,33 @@ func (h *Handler) sendTelegramMessage(text string) error {
 		slog.Info("Telegram notification skipped - token or chat ID not configured")
 		return nil
 	}
-	
+
 	url := fmt.Sprintf("https://api.telegram.org/bot%s/sendMessage", h.TelegramToken)
-	
+
 	msg := TelegramMessage{
-		ChatID: h.TelegramChatID,
-		Text:   text,
+		ChatID:    h.TelegramChatID,
+		Text:      text,
 		ParseMode: "HTML", // Allow HTML formatting
 	}
-	
+
 	payload, err := json.Marshal(msg)
 	if err != nil {
 		slog.Error("Failed to marshal Telegram message", "error", err)
 		return err
 	}
-	
+
 	resp, err := http.Post(url, "application/json", bytes.NewBuffer(payload))
 	if err != nil {
 		slog.Error("Failed to send Telegram message", "error", err)
 		return err
 	}
 	defer resp.Body.Close()
-	
+
 	if resp.StatusCode != http.StatusOK {
 		slog.Error("Telegram API error", "status", resp.Status)
 		return fmt.Errorf("telegram API error: %s", resp.Status)
 	}
-	
+
 	return nil
 }
 
@@ -271,19 +272,19 @@ func validateEmail(email string) bool {
 func sanitizeString(s string) string {
 	// Trim whitespace and normalize
 	s = strings.TrimSpace(s)
-	
+
 	// Replace multiple spaces with a single space
 	spaceRegex := regexp.MustCompile(`\s+`)
 	s = spaceRegex.ReplaceAllString(s, " ")
-	
+
 	// Remove null bytes
 	s = strings.ReplaceAll(s, "\x00", "")
-	
+
 	return s
 }
 
 // handleTemplateError logs the error and returns a proper HTTP error response.
-func handleTemplateError(err error, c echo.Context, message string) error {
+func handleTemplateError(err error, _ echo.Context, message string) error {
 	slog.Error(message, "error", err)
 	return echo.NewHTTPError(500, "Internal Server Error")
 }
