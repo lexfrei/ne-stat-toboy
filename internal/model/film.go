@@ -25,6 +25,7 @@ type TeamMember struct {
     Role     string
     Name     string
     Email    string
+    Phone    string
     ImageURL string
 }
 

@@ -19,6 +19,9 @@ templ Team(film model.FilmInfo) {
                             if member.Email != "" {
                                 <p class="email"><a href="mailto:{ member.Email }">{ member.Email }</a></p>
                             }
+                            if member.Phone != "" {
+                                <p class="phone"><a href="tel:{ member.Phone }">{ member.Phone }</a></p>
+                            }
                         </div>
                     }
                 </div>
@@ -28,9 +31,9 @@ templ Team(film model.FilmInfo) {
                     for _, cast := range film.Cast {
                         <div class="cast-member">
                             if cast.ImageURL != "" {
-                                <img src={ cast.ImageURL } alt={ cast.ActorName } />
+                                <img src={ cast.ImageURL } alt={ cast.Role } />
                             }
-                            <h3>{ cast.ActorName }</h3>
+                            <h3>Будет объявлено позже</h3>
                             <p class="role">{ cast.Role }</p>
                         </div>
                     }
