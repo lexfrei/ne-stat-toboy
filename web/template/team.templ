@@ -17,10 +17,18 @@ templ Team(film model.FilmInfo) {
                             <h3>{ member.Name }</h3>
                             <p class="role">{ member.Role }</p>
                             if member.Email != "" {
-                                <p class="email"><a href="mailto:{ member.Email }">{ member.Email }</a></p>
+                                if member.Role == "Режиссер" {
+                                    <p class="email"><a href="mailto:me@masha.film">me@masha.film</a></p>
+                                } else if member.Role == "Продюсер" {
+                                    <p class="email"><a href="mailto:minin-ilya@yandex.ru">minin-ilya@yandex.ru</a></p>
+                                }
                             }
                             if member.Phone != "" {
-                                <p class="phone"><a href="tel:{ member.Phone }">{ member.Phone }</a></p>
+                                if member.Role == "Режиссер" {
+                                    <p class="phone"><a href="tel:+79164671300">+7 916 467 13 00</a></p>
+                                } else if member.Role == "Продюсер" {
+                                    <p class="phone"><a href="tel:+79110904359">+7 911 090 4359</a></p>
+                                }
                             }
                         </div>
                     }

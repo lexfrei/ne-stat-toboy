@@ -20,10 +20,10 @@ templ Contact(film model.FilmInfo) {
                         <p>{ film.Director }</p>
                         for _, member := range film.TeamMembers {
                             if member.Role == "Режиссер" && member.Email != "" {
-                                <p>Email: <a href="mailto:{ member.Email }">{ member.Email }</a></p>
+                                <p>Email: <a href="mailto:me@masha.film">me@masha.film</a></p>
                             }
                             if member.Role == "Режиссер" && member.Phone != "" {
-                                <p>Телефон: <a href="tel:{ member.Phone }">{ member.Phone }</a></p>
+                                <p>Телефон: <a href="tel:+79164671300">+7 916 467 13 00</a></p>
                             }
                         }
                     </div>
@@ -33,10 +33,10 @@ templ Contact(film model.FilmInfo) {
                         <p>{ film.Producer }</p>
                         for _, member := range film.TeamMembers {
                             if member.Role == "Продюсер" && member.Email != "" {
-                                <p>Email: <a href="mailto:{ member.Email }">{ member.Email }</a></p>
+                                <p>Email: <a href="mailto:minin-ilya@yandex.ru">minin-ilya@yandex.ru</a></p>
                             }
                             if member.Role == "Продюсер" && member.Phone != "" {
-                                <p>Телефон: <a href="tel:{ member.Phone }">{ member.Phone }</a></p>
+                                <p>Телефон: <a href="tel:+79110904359">+7 911 090 4359</a></p>
                             }
                         }
                     </div>
@@ -133,10 +133,10 @@ templ ContactWithCSRF(data ContactData) {
                         <p>{ data.Film.Director }</p>
                         for _, member := range data.Film.TeamMembers {
                             if member.Role == "Режиссер" && member.Email != "" {
-                                <p>Email: <a href="mailto:{ member.Email }">{ member.Email }</a></p>
+                                <p>Email: <a href="mailto:me@masha.film">me@masha.film</a></p>
                             }
                             if member.Role == "Режиссер" && member.Phone != "" {
-                                <p>Телефон: <a href="tel:{ member.Phone }">{ member.Phone }</a></p>
+                                <p>Телефон: <a href="tel:+79164671300">+7 916 467 13 00</a></p>
                             }
                         }
                     </div>
@@ -146,10 +146,10 @@ templ ContactWithCSRF(data ContactData) {
                         <p>{ data.Film.Producer }</p>
                         for _, member := range data.Film.TeamMembers {
                             if member.Role == "Продюсер" && member.Email != "" {
-                                <p>Email: <a href="mailto:{ member.Email }">{ member.Email }</a></p>
+                                <p>Email: <a href="mailto:minin-ilya@yandex.ru">minin-ilya@yandex.ru</a></p>
                             }
                             if member.Role == "Продюсер" && member.Phone != "" {
-                                <p>Телефон: <a href="tel:{ member.Phone }">{ member.Phone }</a></p>
+                                <p>Телефон: <a href="tel:+79110904359">+7 911 090 4359</a></p>
                             }
                         }
                     </div>
