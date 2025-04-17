@@ -233,11 +233,6 @@ section h2 {
     transition: color 0.3s;
 }
 
-.email a:hover {
-    color: var(--primary-color);
-    text-decoration: underline;
-}
-
 .email a {
     color: var(--dim-text);
     text-decoration: none;
@@ -245,6 +240,23 @@ section h2 {
 }
 
 .email a:hover {
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+
+.phone {
+    color: var(--dim-text);
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+}
+
+.phone a {
+    color: #00ccff; /* Bright cyan for better visibility */
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.phone a:hover {
     color: var(--primary-color);
     text-decoration: underline;
 }
