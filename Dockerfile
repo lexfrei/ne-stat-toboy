@@ -42,7 +42,7 @@ RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -ldflags="-s -w
 ############################
 # STEP 2: Build final image
 ############################
-FROM alpine:3.19 AS final
+FROM alpine:3.21 AS final
 
 # Install wget for health check in a single layer
 RUN apk --no-cache add wget ca-certificates tzdata
