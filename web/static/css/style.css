@@ -332,6 +332,29 @@ section h2 {
     justify-content: center;
 }
 
+/* Form Error Styles */
+.error-message {
+    color: #ff6b6b;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    display: none;
+}
+
+.htmx-indicator {
+    opacity: 0;
+    transition: opacity 200ms ease-in;
+    margin-bottom: 1rem;
+    color: var(--dim-text);
+}
+
+.htmx-request .htmx-indicator {
+    opacity: 1;
+}
+
+.htmx-request.htmx-indicator {
+    opacity: 1;
+}
+
 /* Contact Page Styles */
 .contact-item a {
     color: var(--dim-text);

@@ -68,8 +68,37 @@ func main() {
 	// Add middleware
 	e.Use(echoMiddleware.Recover())
 	e.Use(echoMiddleware.Logger())
+	// Security middlewares
+	e.Use(echoMiddleware.CSRFWithConfig(echoMiddleware.CSRFConfig{
+		TokenLookup: "form:_csrf",
+		CookieName: "csrf",
+		CookieMaxAge: 3600,
+		CookieSecure: true, 
+		CookieHTTPOnly: true,
+		CookieSameSite: http.SameSiteStrictMode,
+		ContextKey: "csrf",
+	}))
+	e.Use(echoMiddleware.SecureWithConfig(echoMiddleware.SecureConfig{
+		XSSProtection:         "1; mode=block",
+		ContentTypeNosniff:    "nosniff",
+		XFrameOptions:         "SAMEORIGIN",
+		HSTSMaxAge:            31536000,
+		HSTSExcludeSubdomains: false,
+		ContentSecurityPolicy: "default-src 'self'; script-src 'self' unpkg.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' api.telegram.org; font-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'",
+	}))
+	// Rate limiting
+	e.Use(echoMiddleware.RateLimiterWithConfig(echoMiddleware.RateLimiterConfig{
+		Store: echoMiddleware.NewRateLimiterMemoryStore(20), // 20 requests per second
+		DenyHandler: func(c echo.Context, identifier string, err error) error {
+			return c.JSON(http.StatusTooManyRequests, map[string]string{
+				"error": "too many requests",
+			})
+		},
+	}))
 	// Enable response compression
 	e.Use(echoMiddleware.Gzip())
+	// Cache control for Cloudflare
+	e.Use(middleware.CacheControlMiddleware())
 	// Add minification middleware
 	e.Use(middleware.MinifyMiddleware())
 

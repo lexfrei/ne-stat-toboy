@@ -5,8 +5,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"html"
 	"log/slog"
 	"net/http"
+	"regexp"
+	"strings"
 	"time"
 	"github.com/labstack/echo/v4"
 	"github.com/lexfrei/ne-stat-toboy/internal/model"
@@ -145,17 +148,55 @@ func (h *Handler) ContactHandlerEcho(c echo.Context) error {
 
 // ContactSubmitHandlerEcho processes contact form submissions.
 func (h *Handler) ContactSubmitHandlerEcho(c echo.Context) error {
+	// Validate CSRF token (handled by middleware)
+	
 	// Get form data
-	name := c.FormValue("name")
-	email := c.FormValue("email")
-	message := c.FormValue("message")
+	name := strings.TrimSpace(c.FormValue("name"))
+	email := strings.TrimSpace(c.FormValue("email"))
+	message := strings.TrimSpace(c.FormValue("message"))
 	timeStamp := time.Now().Format(time.RFC3339)
+	
+	// Validate input
+	errors := make(map[string]string)
+	
+	if name == "" {
+		errors["name"] = "Имя обязательно"
+	} else if len(name) > 100 {
+		errors["name"] = "Имя слишком длинное (максимум 100 символов)"
+	}
+	
+	if email == "" {
+		errors["email"] = "Email обязателен"
+	} else if !validateEmail(email) {
+		errors["email"] = "Неверный формат email"
+	} else if len(email) > 100 {
+		errors["email"] = "Email слишком длинный (максимум 100 символов)"
+	}
+	
+	if message == "" {
+		errors["message"] = "Сообщение обязательно"
+	} else if len(message) > 5000 {
+		errors["message"] = "Сообщение слишком длинное (максимум 5000 символов)"
+	}
+	
+	if len(errors) > 0 {
+		// For HTMX requests, return form with errors
+		c.Response().Header().Set("HX-Trigger", "{\"showFormErrors\": true}")
+		return c.JSON(http.StatusBadRequest, map[string]interface{}{
+			"errors": errors,
+		})
+	}
+	
+	// Sanitize input for logging/telegram
+	name = sanitizeString(name)
+	email = sanitizeString(email)
+	message = sanitizeString(message)
 	
 	// Log the submission
 	slog.Info("Contact form submission", 
 		"name", name,
 		"email", email,
-		"message", message,
+		"message_length", len(message),
 		"time", timeStamp)
 	
 	// Format message for Telegram
@@ -165,7 +206,7 @@ func (h *Handler) ContactSubmitHandlerEcho(c echo.Context) error {
 		"<b>Email:</b> %s\n" +
 		"<b>Время:</b> %s\n\n" +
 		"<b>Сообщение:</b>\n%s",
-		name, email, timeStamp, message)
+		html.EscapeString(name), html.EscapeString(email), timeStamp, html.EscapeString(message))
 	
 	// Send to Telegram
 	err := h.sendTelegramMessage(telegramMsg)
@@ -217,6 +258,28 @@ func (h *Handler) sendTelegramMessage(text string) error {
 	}
 	
 	return nil
+}
+
+// validateEmail checks if the email format is valid
+func validateEmail(email string) bool {
+	// Simple validation just for demonstration
+	emailRegex := regexp.MustCompile(`^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$`)
+	return emailRegex.MatchString(email)
+}
+
+// sanitizeString removes potentially harmful characters
+func sanitizeString(s string) string {
+	// Trim whitespace and normalize
+	s = strings.TrimSpace(s)
+	
+	// Replace multiple spaces with a single space
+	spaceRegex := regexp.MustCompile(`\s+`)
+	s = spaceRegex.ReplaceAllString(s, " ")
+	
+	// Remove null bytes
+	s = strings.ReplaceAll(s, "\x00", "")
+	
+	return s
 }
 
 // handleTemplateError logs the error and returns a proper HTTP error response.
