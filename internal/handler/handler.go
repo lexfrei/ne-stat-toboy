@@ -75,10 +75,10 @@ func New(opts ...HandlerOption) *Handler {
 				},
 			},
 			TeamMembers: []model.TeamMember{
-			{Role: "Режиссер", Name: "Мария Свиридкина", Email: "me@masha.film", Phone: "+7 916 467 13 00", ImageURL: "/static/img/cast/maria.webp"},
-			{Role: "Продюсер", Name: "Илья Минин", Email: "minin-ilya@yandex.ru", Phone: "+7 911 090 4359", ImageURL: "/static/img/cast/ilya.webp"},
+				{Role: "Режиссер", Name: "Мария Свиридкина", Email: "me@masha.film", Phone: "+79164671300", ImageURL: "/static/img/cast/maria.webp"},
+				{Role: "Продюсер", Name: "Илья Минин", Email: "minin-ilya@yandex.ru", Phone: "+79110904359", ImageURL: "/static/img/cast/ilya.webp"},
 				{Role: "Второй режиссер", Name: "Елизавета Федорова", Email: "", Phone: "", ImageURL: ""},
-				{Role: "Директор площадки", Name: "Арина Анисова", Email: "", Phone: "", ImageURL: ""},
+				{Role: "Директор площадки", Name: "Арина Анисова", Email: "arishasov@gmail.com", Phone: "+79853675219", ImageURL: "/static/img/cast/arina.webp"},
 				{Role: "Кастинг-директор", Name: "Максим Головач", Email: "", Phone: "", ImageURL: ""},
 				{Role: "Костюмер", Name: "Лола Самадова", Email: "", Phone: "", ImageURL: ""},
 				{Role: "Художник-постановщик", Name: "Дарья Зеленкова", Email: "", Phone: "", ImageURL: ""},
