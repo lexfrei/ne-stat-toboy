@@ -278,6 +278,9 @@ section h2 {
 .location-card img {
     width: 100%;
     height: auto;
+    max-height: 400px;
+    object-fit: cover;
+    object-position: center;
 }
 
 .location-info {

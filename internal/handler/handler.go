@@ -61,17 +61,17 @@ func New(opts ...HandlerOption) *Handler {
 				{
 					Name:        "Квартира",
 					Description: "В квартире Еве очень одиноко, на что указывает холодное вечернее освещение. Тесное пространство намекает на то, что героине здесь \"тяжело дышать\" во всех смыслах.",
-					ImageURL:    "/static/img/location-apartment.jpg",
+					ImageURL:    "/static/img/location-apartment.webp",
 				},
 				{
 					Name:        "Заброшка",
 					Description: "На заброшке Ева \"разрушает фасад\" идеальной семьи. Здесь берет начало разрушение ее старой жизни, которое освобождает место мечтам и надеждам.",
-					ImageURL:    "/static/img/location-abandoned.jpg",
+					ImageURL:    "/static/img/location-abandoned.webp",
 				},
 				{
 					Name:        "Артплэй",
 					Description: "В Артплэе Ева чувствует себя свободно и счастливо. Рядом с поддерживающим отцом она наконец получает возможность осуществить свои мечты.",
-					ImageURL:    "/static/img/location-artplay.jpg",
+					ImageURL:    "/static/img/location-artplay.webp",
 				},
 			},
 			TeamMembers: []model.TeamMember{
@@ -81,7 +81,7 @@ func New(opts ...HandlerOption) *Handler {
 				{Role: "Директор площадки", Name: "Арина Анисова", Email: "arishasov@gmail.com", Phone: "+79853675219", ImageURL: "/static/img/cast/arina.webp"},
 				{Role: "Кастинг-директор", Name: "Максим Головач", Email: "", Phone: "", ImageURL: ""},
 				{Role: "Костюмер", Name: "Лола Самадова", Email: "", Phone: "", ImageURL: ""},
-				{Role: "Художник-постановщик", Name: "Дарья Зеленкова", Email: "", Phone: "", ImageURL: ""},
+				{Role: "Художник-постановщик", Name: "Дарья Зеленкова", Email: "", Phone: "", ImageURL: "/static/img/cast/daria.webp"},
 				{Role: "Оператор-постановщик", Name: "Аслан Бададов", Email: "", Phone: "", ImageURL: ""},
 				{Role: "Фокус-пуллер", Name: "Александр Грушовец", Email: "", Phone: "", ImageURL: ""},
 			},
