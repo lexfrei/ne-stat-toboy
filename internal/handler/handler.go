@@ -82,7 +82,7 @@ func New(opts ...HandlerOption) *Handler {
 				{Role: "Кастинг-директор", Name: "Максим Головач", Email: "", Phone: "", ImageURL: ""},
 				{Role: "Костюмер", Name: "Лола Самадова", Email: "", Phone: "", ImageURL: ""},
 				{Role: "Художник-постановщик", Name: "Дарья Зеленкова", Email: "", Phone: "", ImageURL: "/static/img/cast/daria.webp"},
-				{Role: "Оператор-постановщик", Name: "Аслан Бададов", Email: "", Phone: "", ImageURL: ""},
+				{Role: "Оператор-постановщик", Name: "Аслан Бададов", Email: "", Phone: "", ImageURL: "/static/img/cast/aslan.webp"},
 				{Role: "Фокус-пуллер", Name: "Александр Грушовец", Email: "", Phone: "", ImageURL: ""},
 			},
 			Cast: []model.CastMember{
